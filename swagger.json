@@ -16,9 +16,52 @@
       "description": "Development Server"
     }
   ],
+   "tags": [
+    {
+      "name": "Books",
+      "description": "Operations related to books"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "BookDetails": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "publishedYear": {
+            "type": "integer"
+          }
+        }
+      },
+      "BookInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "publishedYear": {
+            "type": "integer"
+          }
+        },
+        "required": ["title", "author", "publishedYear"]
+      }
+    }
+  },
   "paths": {
     "/books": {
       "get": {
+        "tags": ["Books"],
         "summary": "Get a list of books",
         "responses": {
           "200": {
@@ -45,6 +88,7 @@
         }
       },
       "post": {
+        "tags": ["Books"],
         "summary": "Add a new book",
         "requestBody": {
           "description": "New book data",
@@ -68,6 +112,7 @@
     },
     "/books/{bookId}": {
       "get": {
+        "tags": ["Books"],
         "summary": "Get book details by ID",
         "parameters": [
           {
@@ -99,6 +144,7 @@
         }
       },
       "put": {
+        "tags": ["Books"],
         "summary": "Update book details by ID",
         "parameters": [
           {
@@ -133,6 +179,7 @@
         }
       },
       "delete": {
+        "tags": ["Books"],
         "summary": "Delete book by ID",
         "parameters": [
           {
