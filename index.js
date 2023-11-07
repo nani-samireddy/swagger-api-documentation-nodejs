@@ -6,7 +6,11 @@ const {
   SwaggerUIStandalonePreset,
 } = require("swagger-ui-dist");
 
+const cros = require("cors");
+
+
 const app = express();
+
 const port = 3000;
 
 // Load Swagger JSON documentation from a file
@@ -32,6 +36,21 @@ const books = [
   { id: 2, title: "Sample Book 2", author: "Author 2", publishedYear: 2019 },
 ];
 
+app.use(cros());
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://swagger-api-documentation-nodejs.vercel.app"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  console.log(req.method + " " + req.path + " - " + req.ip);
+  next();
+});
 app.use(express.json());
 
 // Get a list of books
