@@ -9,59 +9,17 @@
       "email": "youremail@example.com"
     }
   },
+
   "servers": [
     {
       "url": "http://localhost:3000",
       "description": "Development Server"
     }
   ],
-  "tags": [
-    {
-      "name": "Books",
-      "description": "Operations related to books"
-    }
-  ],
-  "components": {
-    "schemas": {
-      "BookDetails": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "title": {
-            "type": "string"
-          },
-          "author": {
-            "type": "string"
-          },
-          "publishedYear": {
-            "type": "integer"
-          }
-        }
-      },
-      "BookInput": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "author": {
-            "type": "string"
-          },
-          "publishedYear": {
-            "type": "integer"
-          }
-        },
-        "required": ["title", "author", "publishedYear"]
-      }
-    }
-  },
   "paths": {
     "/books": {
       "get": {
         "summary": "Get a list of books",
-        "tags": ["Books"],
         "responses": {
           "200": {
             "description": "List of books retrieved successfully",
@@ -69,10 +27,16 @@
               "application/json": {
                 "example": [
                   {
-                    "$ref": "#/components/schemas/BookDetails"
+                    "id": 1,
+                    "title": "Sample Book 1",
+                    "author": "Author 1",
+                    "publishedYear": 2020
                   },
                   {
-                    "$ref": "#/components/schemas/BookDetails"
+                    "id": 2,
+                    "title": "Sample Book 2",
+                    "author": "Author 2",
+                    "publishedYear": 2019
                   }
                 ]
               }
@@ -82,14 +46,15 @@
       },
       "post": {
         "summary": "Add a new book",
-        "tags": ["Books"],
         "requestBody": {
           "description": "New book data",
           "required": true,
           "content": {
             "application/json": {
               "example": {
-                "$ref": "#/components/schemas/BookInput"
+                "title": "New Book",
+                "author": "New Author",
+                "publishedYear": 2023
               }
             }
           }
@@ -104,7 +69,6 @@
     "/books/{bookId}": {
       "get": {
         "summary": "Get book details by ID",
-        "tags": ["Books"],
         "parameters": [
           {
             "name": "bookId",
@@ -121,7 +85,10 @@
             "content": {
               "application/json": {
                 "example": {
-                  "$ref": "#/components/schemas/BookDetails"
+                  "id": 1,
+                  "title": "Sample Book 1",
+                  "author": "Author 1",
+                  "publishedYear": 2020
                 }
               }
             }
@@ -133,7 +100,6 @@
       },
       "put": {
         "summary": "Update book details by ID",
-        "tags": ["Books"],
         "parameters": [
           {
             "name": "bookId",
@@ -150,7 +116,9 @@
           "content": {
             "application/json": {
               "example": {
-                "$ref": "#/components/schemas/BookInput"
+                "title": "Updated Book",
+                "author": "Updated Author",
+                "publishedYear": 2024
               }
             }
           }
@@ -166,7 +134,6 @@
       },
       "delete": {
         "summary": "Delete book by ID",
-        "tags": ["Books"],
         "parameters": [
           {
             "name": "bookId",
