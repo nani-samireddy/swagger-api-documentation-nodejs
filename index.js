@@ -8,12 +8,19 @@ const port = 3000;
 // Load Swagger JSON documentation from a file
 const options = {
   swaggerDefinition: require("./swagger.json"),
-    "apis":[],
+  apis: [],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCssUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css",
+  })
+);
 
 // Sample data for the book library
 const books = [
