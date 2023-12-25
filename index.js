@@ -36,7 +36,7 @@ const books = [
   { id: 2, title: "Sample Book 2", author: "Author 2", publishedYear: 2019 },
 ];
 
-app.use(cros({origin: '*'}));
+app.use(cros({ origin: '*' }));
 
 app.use(express.json());
 

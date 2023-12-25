@@ -1,0 +1,13 @@
+TODO: 
+1. Add error response in "/auth/logout" after api gets updated
+2. update the 200 response of "region/update-country-visibility"
+3. Ask student start_year in student object format example
+
+4. Add post not working
+5. adding required field responses 400 in the schema
+6. edit post 200 status proper data returning
+7. edit-post swagger ui try it returning 500 status
+8. delete-post returning number
+
+9. even after deleting the comment it is returning you don;t have permission to delete the comment
+10. add proper response for delete comments

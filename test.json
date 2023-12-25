@@ -1,0 +1,4496 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Swagger HeyDu Backend",
+        "description": "This is Swagger specification of existing v1 HeyDu Backend APIs",
+        "version": "1.0.0"
+    },
+    "externalDocs": {
+        "description": "HeyDu Backend Github",
+        "url": "https://github.com/heydu-dev/heydu-backend"
+    },
+    "servers": [
+        {
+            "url": "http://ec2-13-232-250-66.ap-south-1.compute.amazonaws.com:8080/api"
+        },
+        {
+            "url": "http://localhost:8080/api/"
+        }
+    ],
+    "tags": [
+        {
+            "name": "authentication",
+            "description": "APIs about authentication and authorization"
+        },
+        {
+            "name": "regions",
+            "description": "APIs about regions"
+        },
+        {
+            "name": "constants",
+            "description": "APIs about Constants"
+        },
+        {
+            "name": "profile",
+            "description": "Operatioons about profile"
+        },
+        {
+            "name": "post",
+            "description": "Operatioons about post"
+        },
+        {
+            "name": "comment",
+            "description": "Operatioons about comment"
+        },
+        {
+            "name": "interest-comment",
+            "description": "Operatioons about interest-comment"
+        },
+        {
+            "name": "store",
+            "description": "Access to Petstore orders",
+            "externalDocs": {
+                "description": "Find out more about our store",
+                "url": "http://swagger.io"
+            }
+        },
+        {
+            "name": "user",
+            "description": "Operations about user"
+        }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Register institution",
+                "description": "Registers the institution",
+                "operationId": "register",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "$ref": "#/components/schemas/Institution"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Institution"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Email in use, please use different email"
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/auth/send-otp": {
+            "post": {
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Sends the OTP to email",
+                "description": "Provides OTP to the registered email",
+                "operationId": "sendOtp",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendOTPRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "msg": "OTP sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SendOTPResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found, please register before login"
+                    },
+                    "500": {
+                        "description": "Please try after sometime, something is wrong at OTP service"
+                    }
+                }
+            }
+        },
+        "/auth/validate-otp": {
+            "post": {
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Validates OTP",
+                "description": "Provides access token after successful authentication",
+                "operationId": "validateOtp",
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ValidateOTPRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidateOTPResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    },
+                                    "otp": {
+                                        "value": {
+                                            "message": "\"otp\" is required"
+                                        }
+                                    },
+                                    "email": {
+                                        "value": {
+                                            "message": "\"email\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Incorrect OTP sent"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Logout",
+                "description": "Logout",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Logged out successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/constant/degrees": {
+            "get": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Get all degrees",
+                "description": "Get all degrees",
+                "operationId": "getDegrees",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Degree"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/schemas/IlligalRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Add new degree",
+                "description": "Add new degree",
+                "operationId": "DegreeRequest",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DegreeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Degree"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/schemas/IlligalRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/constant/degree/:id": {
+            "put": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Update degree by id",
+                "description": "Update degree by id",
+                "operationId": "updateDegree",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Degree id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DegreeRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Degree"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Delete degree by id",
+                "description": "Delete degree by id",
+                "operationId": "deleteDegree",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Degree id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Degree"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/institution-types": {
+            "get": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Get all institution types",
+                "description": "Get all institution types",
+                "operationId": "getInstitutionTypes",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/InstitutionType"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Add new institution type",
+                "description": "Add new institution type",
+                "operationId": "addInstitutionType",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InstitutionType"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InstitutionType"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/institution-types/:id": {
+            "put": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Update institution type by id",
+                "description": "Update institution type by id",
+                "operationId": "updateInstitutionType",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Institution type id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InstitutionTypeUpdate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InstitutionType"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Delete institution type by id",
+                "description": "Delete institution type by id",
+                "operationId": "deleteInstitutionType",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Institution type id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InstitutionType"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/permissions": {
+            "get": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Get all permissions",
+                "description": "Get all permissions",
+                "operationId": "getPermissions",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PermissonResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/profile-types": {
+            "get": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Get all profile types",
+                "description": "Get all profile types",
+                "operationId": "getProfileTypes",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProfileType"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "get": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Get all roles",
+                "description": "Get all roles",
+                "operationId": "getRoles",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Role"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/interest": {
+            "get": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Get all interests",
+                "description": "Get all interests",
+                "operationId": "getInterests",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Interest"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Add new interest",
+                "description": "Add new interest",
+                "operationId": "addInterest",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/addInterest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Interest"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/interest/:id": {
+            "put": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Update interest by id",
+                "description": "Update interest by id",
+                "operationId": "updateInterest",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Interest id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/updateInterest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Interest"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "constants"
+                ],
+                "summary": "Delete interest by id",
+                "description": "Delete interest by id",
+                "operationId": "deleteInterest",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Interest id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Interest"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/region/get-countries": {
+            "get": {
+                "tags": [
+                    "regions"
+                ],
+                "summary": "Get all countries",
+                "description": "Get all countries",
+                "operationId": "getCountries",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Country"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of items to return",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "dependencies": {
+                            "offset": [
+                                "limit"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Number of items to skip",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "dependencies": {
+                            "limit": [
+                                "offset"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "is_all",
+                        "in": "query",
+                        "description": "Flag to indicate whether to retrieve all items",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ]
+            }
+        },
+        "/region/get-states": {
+            "get": {
+                "tags": [
+                    "regions"
+                ],
+                "summary": "Get all states",
+                "description": "Get all states",
+                "operationId": "getStates",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/State"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "\"country_code\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/region/get-visible-countries": {
+            "get": {
+                "tags": [
+                    "regions"
+                ],
+                "summary": "Get all visible countries",
+                "description": "Get all visible countries",
+                "operationId": "getVisibleCountries",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of items to return",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "dependencies": {
+                            "offset": [
+                                "limit"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Number of items to skip",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "dependencies": {
+                            "limit": [
+                                "offset"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "is_all",
+                        "in": "query",
+                        "description": "Flag to indicate whether to retrieve all items",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "example": "1"
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Country"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "\"country_code\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/region/update-country-visibility": {
+            "put": {
+                "tags": [
+                    "regions"
+                ],
+                "summary": "Update country visibility",
+                "description": "Update country visibility",
+                "operationId": "updateCountryVisibility",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCountryVisibilityRequestBody"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Country visibility updated successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "country_code": {
+                                        "value": {
+                                            "message": "\"country_code\" is required"
+                                        }
+                                    },
+                                    "show_country": {
+                                        "value": {
+                                            "message": "\"show_country\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/profile/add-student": {
+            "post": {
+                "tags": [
+                    "profile"
+                ],
+                "summary": "Add new student",
+                "description": "Add new student",
+                "operationId": "addStudent",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddStudent"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Student added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddStudentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email in use, please use different email"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/key-signed-urls": {
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get signed urls for post images",
+                "description": "Get signed urls for post images",
+                "operationId": "getSignedUrls",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/KeySignedUrlRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Signed urls generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/KeySignedUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid request"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/add-post": {
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Add new post",
+                "description": "Add new post",
+                "operationId": "addPost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Post added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid request"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/edit-post/:id": {
+            "post": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Edit post",
+                "description": "Edit post",
+                "operationId": "editPost",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Degree id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Post edited successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid request"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/delete-post": {
+            "delete": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Delete post",
+                "description": "Delete post",
+                "operationId": "deletePost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeletePostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Post deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeletePostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid parameters or request body"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/get-post": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get post",
+                "description": "Get post",
+                "operationId": "getPost",
+                "parameters": [
+                    {
+                        "name": "profile_email",
+                        "in": "query",
+                        "description": "profile email",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/ProfileEmail"
+                        }
+                    },
+                    {
+                        "name": "profile_type_id",
+                        "in": "query",
+                        "description": "profile type id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/ProfileTypeId"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Number of items to skip",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of items to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "message": "Post fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    },
+                                    "offset": {
+                                        "value": {
+                                            "message": "\"offset\" is required"
+                                        }
+                                    },
+                                    "limit": {
+                                        "value": {
+                                            "message": "\"limit\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/get-post/:institutionId": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get post",
+                "description": "Get post",
+                "operationId": "getPost",
+                "parameters": [
+                    {
+                        "name": "institutionId",
+                        "in": "path",
+                        "description": "institutionId",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "profile_email",
+                        "in": "query",
+                        "description": "profile email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "profile_type_id",
+                        "in": "query",
+                        "description": "profile type id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/ProfileTypeId"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "Number of items to skip",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of items to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "message": "Post fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    },
+                                    "offset": {
+                                        "value": {
+                                            "message": "\"offset\" is required"
+                                        }
+                                    },
+                                    "limit": {
+                                        "value": {
+                                            "message": "\"limit\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/like-comment-count/:postId": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get like and comment count",
+                "description": "Get like and comment count",
+                "operationId": "getLikeCommentCount",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "Post id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "profile_email",
+                        "in": "query",
+                        "description": "profile email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "profile_type_id",
+                        "in": "query",
+                        "description": "profile type id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/ProfileTypeId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "message": "Like and comment count fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LikeCommentCountResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "postId": {
+                                        "value": {
+                                            "message": "\"postId\" is required"
+                                        }
+                                    },
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/like-post": {
+            "put": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Like post",
+                "description": "Like post",
+                "operationId": "likePost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LikePostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Post liked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LikePostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "postId": {
+                                        "value": {
+                                            "message": "\"postId\" is required"
+                                        }
+                                    },
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/dislike-post": {
+            "delete": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Dislike post",
+                "description": "Dislike post",
+                "operationId": "dislikePost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DislikePostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DislikePostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "example": "\"postId\" is required"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "postId": {
+                                        "value": {
+                                            "message": "\"postId\" is required"
+                                        }
+                                    },
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/like-post/:postId": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get like post",
+                "description": "Get like post",
+                "operationId": "getLikePost",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "Post id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "profile_email",
+                        "in": "query",
+                        "description": "profile email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "profile_type_id",
+                        "in": "query",
+                        "description": "profile type id",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/ProfileTypeId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "message": "Like post fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetLikePostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "postId": {
+                                        "value": {
+                                            "message": "\"postId\" is required"
+                                        }
+                                    },
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/unsave-post": {
+            "delete": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Unsave post",
+                "description": "Unsave post",
+                "operationId": "unsavePost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UnsavePostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnsavePostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/components/schemas/IlligalRequest"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "postId": {
+                                        "value": {
+                                            "message": "\"postId\" is required"
+                                        }
+                                    },
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/save-post": {
+            "put": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Save post",
+                "description": "Save post",
+                "operationId": "savePost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SavePostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SavePostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/components/schemas/IlligalRequest"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get saved post",
+                "description": "Get saved post",
+                "operationId": "getSavedPost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetSavedPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Saved post fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetSavedPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/pinned-post": {
+            "put": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Pinned post",
+                "description": "Pinned post",
+                "operationId": "pinnedPost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PinnedPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PinnedPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/components/schemas/IlligalRequest"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "institution_id": {
+                                        "value": {
+                                            "message": "\"institution_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/unpinned-post": {
+            "delete": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Unpinned post",
+                "description": "Unpinned post",
+                "operationId": "unpinnedPost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UnpinnedPostRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnpinnedPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/components/schemas/IlligalRequest"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "institution_id": {
+                                        "value": {
+                                            "message": "\"institution_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/post/pinned-post/:institutionId": {
+            "get": {
+                "tags": [
+                    "post"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get pinned post",
+                "description": "Get pinned post",
+                "operationId": "getPinnedPost",
+                "parameters": [
+                    {
+                        "name": "institutionId",
+                        "in": "path",
+                        "description": "institutionId",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/InstitutionId"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "message": "Pinned post fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetPinnedPostResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "institutionId": {
+                                        "value": {
+                                            "message": "\"institutionId\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/comment/add-comment": {
+            "post": {
+                "tags": [
+                    "comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Add new comment",
+                "description": "Add new comment",
+                "operationId": "addComment",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddCommentRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Comment added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddCommentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid request"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "description": {
+                                        "value": {
+                                            "message": "\"description\" is required"
+                                        }
+                                    },
+                                    "commenting_profile_email": {
+                                        "value": {
+                                            "message": "\"commenting_profile_email\" is required"
+                                        }
+                                    },
+                                    "commenting_profile_type_id": {
+                                        "value": {
+                                            "message": "\"commenting_profile_type_id\" is required"
+                                        }
+                                    },
+                                    "commenting_profile_role_id": {
+                                        "value": {
+                                            "message": "\"commenting_profile_role_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/comment/delete-comment": {
+            "delete": {
+                "tags": [
+                    "comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Delete comment",
+                "description": "Delete comment",
+                "operationId": "deleteComment",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeleteCommentRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Comment deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteCommentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "id": {
+                                        "value": {
+                                            "message": "\"id\" is required"
+                                        }
+                                    },
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "commenting_profile_email": {
+                                        "value": {
+                                            "message": "\"commenting_profile_email\" is required"
+                                        }
+                                    },
+                                    "commenting_profile_type_id": {
+                                        "value": {
+                                            "message": "\"commenting_profile_type_id\" is required"
+                                        }
+                                    },
+                                    "commenting_profile_role_id": {
+                                        "value": {
+                                            "message": "\"commenting_profile_role_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/comment/edit-comment": {
+            "put": {
+                "tags": [
+                    "comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Edit comment",
+                "description": "Edit comment",
+                "operationId": "editComment",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditCommentRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Comment edited successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditCommentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "id": {
+                                        "value": {
+                                            "message": "\"id\" is required"
+                                        }
+                                    },
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "description": {
+                                        "value": {
+                                            "message": "\"description\" is required"
+                                        }
+                                    },
+                                    "profile_email": {
+                                        "value": {
+                                            "message": "\"profile_email\" is required"
+                                        }
+                                    },
+                                    "profile_type_id": {
+                                        "value": {
+                                            "message": "\"profile_type_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/comment/get-comments": {
+            "get": {
+                "tags": [
+                    "comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get comments",
+                "description": "Get comments",
+                "operationId": "getComments",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetCommentsRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetCommentsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "offset": {
+                                        "value": {
+                                            "message": "\"offset\" is required"
+                                        }
+                                    },
+                                    "limit": {
+                                        "value": {
+                                            "message": "\"limit\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/interest-comment/add-interest-comment": {
+            "post": {
+                "tags": [
+                    "interest-comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Add interest comment",
+                "description": "Add interest comment",
+                "operationId": "addInterestComment",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddInterestCommentRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddInterestCommentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "commenting_profile_email": {
+                                        "value": {
+                                            "message": "\"commenting_profile_email\" is required"
+                                        }
+                                    },
+                                    "description": {
+                                        "value": {
+                                            "message": "\"description\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/interest-comment/delete-interest-comment": {
+            "delete": {
+                "tags": [
+                    "interest-comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Delete interest comment",
+                "description": "Delete interest comment",
+                "operationId": "deleteInterestComment",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeleteInterestCommentRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Interest comment deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteInterestCommentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "id": {
+                                        "value": {
+                                            "message": "\"id\" is required"
+                                        }
+                                    },
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "/interest-comment/edit-interest-comment": {
+            "put": {
+                "tags": [
+                    "interest-comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Edit interest comment",
+                "description": "Edit interest comment",
+                "operationId": "editInterestComment",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditInterestCommentRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Interest comment edited successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditInterestCommentResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "id": {
+                                        "value": {
+                                            "message": "\"id\" is required"
+                                        }
+                                    },
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "description": {
+                                        "value": {
+                                            "message": "\"description\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        },
+        "interest-comment/get-interest-comments": {
+            "get": {
+                "tags": [
+                    "interest-comment"
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "summary": "Get interest comments",
+                "description": "Get interest comments",
+                "operationId": "getInterestComments",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetInterestCommentsRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "message": "Interest comments fetched successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetInterestCommentsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IlligalRequest"
+                                },
+                                "examples": {
+                                    "post_id": {
+                                        "value": {
+                                            "message": "\"post_id\" is required"
+                                        }
+                                    },
+                                    "offset": {
+                                        "value": {
+                                            "message": "\"offset\" is required"
+                                        }
+                                    },
+                                    "limit": {
+                                        "value": {
+                                            "message": "\"limit\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/schemas/500Response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Post": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "media_ids": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GetPostMediaIdResponse"
+                        }
+                    },
+                    "description": {
+                        "$ref": "#/components/schemas/PostDescription"
+                    },
+                    "circle_type": {
+                        "$ref": "#/components/schemas/CircleType"
+                    },
+                    "post_user_type_id": {
+                        "$ref": "#/components/schemas/PostUserTypeID"
+                    },
+                    "post_user_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "post_user_role_id": {
+                        "$ref": "#/components/schemas/PostUserRoleID"
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId"
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/UpdatedAt"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                    }
+                }
+            },
+            "UpdatedAt": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "CreatedAt": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "PostDescription": {
+                "type": "string",
+                "example": "This is a sample post",
+                "maxLength": 300
+            },
+            "PostId": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "InstitutionId": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Institution ID"
+            },
+            "CircleType": {
+                "type": "string",
+                "enum": [
+                    "my_college",
+                    "followers",
+                    "everyone"
+                ],
+                "description": "Circle type"
+            },
+            "Email": {
+                "type": "string",
+                "format": "email"
+            },
+            "PostUserRoleID": {
+                "type": "integer",
+                "format": "int32",
+                "enum": [
+                    0,
+                    1,
+                    2,
+                    3
+                ],
+                "description": "Post user role ID"
+            },
+            "PostUserTypeID": {
+                "type": "integer",
+                "format": "int32",
+                "enum": [
+                    0,
+                    1,
+                    2,
+                    3
+                ],
+                "description": "Post user type ID"
+            },
+            "ProfileTypeId": {
+                "type": "integer",
+                "format": "int32",
+                "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "description": "(0,1,2,3,4 are allowed values)"
+            },
+            "IlligalRequest": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "parameters is not allowed"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "500Response": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Something went wrong, please try again"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Country": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "United States"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "US"
+                    },
+                    "phone_code": {
+                        "type": "string",
+                        "example": "+1"
+                    },
+                    "show_country": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "UpdateCountryVisibilityRequestBody": {
+                "type": "object",
+                "properties": {
+                    "country_code": {
+                        "type": "string",
+                        "example": "US",
+                        "required": true
+                    },
+                    "show_country": {
+                        "type": "boolean",
+                        "example": true,
+                        "required": true
+                    }
+                }
+            },
+            "SendOTPRequest": {
+                "required": [
+                    "email"
+                ],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "$ref": "#/components/schemas/Email",
+                        "example": "abc@gmail.com"
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    }
+                }
+            },
+            "SendOTPResponse": {
+                "type": "object",
+                "properties": {
+                    "msg": {
+                        "type": "string",
+                        "example": "OTP sent successfully"
+                    },
+                    "profile": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "integer"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "email": {
+                                "type": "string"
+                            },
+                            "contact": {
+                                "type": "string"
+                            },
+                            "address": {
+                                "type": "string"
+                            },
+                            "alternate_contact": {
+                                "type": "string"
+                            },
+                            "university_id": {
+                                "type": "integer"
+                            },
+                            "start_year": {
+                                "type": "integer"
+                            },
+                            "end_year": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
+            "ValidateOTPRequest": {
+                "required": [
+                    "email",
+                    "otp",
+                    "profile_type_id"
+                ],
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "$ref": "#/components/schemas/Email",
+                        "example": "abc@gmail.com"
+                    },
+                    "otp": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    }
+                }
+            },
+            "ValidateOTPResponse": {
+                "type": "object",
+                "properties": {
+                    "msg": {
+                        "type": "string",
+                        "example": "OTP validation is successful"
+                    },
+                    "bearerToken": {
+                        "type": "string",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                    }
+                }
+            },
+            "Institution": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "short_name": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "country_code": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "state": {
+                        "type": "integer",
+                        "format": "int32",
+                        "required": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "email": {
+                        "$ref": "#/components/schemas/Email",
+                        "required": true
+                    },
+                    "contact": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "alternate_contact": {
+                        "type": "string",
+                        "required": false
+                    },
+                    "landmark": {
+                        "type": "string"
+                    },
+                    "university_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "required": true
+                    },
+                    "profile_img_binary": {
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "status": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "institution_type_id": {
+                        "type": "integer",
+                        "required": true
+                    },
+                    "role_id": {
+                        "type": "integer",
+                        "required": true
+                    }
+                }
+            },
+            "Degree": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "1231"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "B.Tech"
+                    }
+                }
+            },
+            "DegreeRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "B.Tech"
+                    }
+                }
+            },
+            "InstitutionType": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "0011"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Engineering"
+                    },
+                    "is_system": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                }
+            },
+            "InstitutionTypeUpdate": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Engineering"
+                    }
+                }
+            },
+            "PermissonResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "0011"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "ADMIN"
+                    },
+                    "permission_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "ADMIN"
+                    },
+                    "permissions": {
+                        "type": "string",
+                        "example": "string"
+                    },
+                    "tables": {
+                        "type": "string",
+                        "example": "string"
+                    }
+                }
+            },
+            "ProfileType": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "0011"
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "john doe"
+                    }
+                }
+            },
+            "Role": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "0011"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "ADMIN"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "ADMIN"
+                    },
+                    "permissions": {
+                        "type": "string",
+                        "example": "string"
+                    },
+                    "tables": {
+                        "type": "string",
+                        "example": "string"
+                    }
+                }
+            },
+            "Interest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "0011"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "sample interest name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "description of interest"
+                    },
+                    "img_binary": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                }
+            },
+            "addInterest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "sample interest name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "description of interest"
+                    },
+                    "img_binary": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                }
+            },
+            "updateInterest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "sample interest name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "description of interest"
+                    },
+                    "img_binary": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                }
+            },
+            "AddStudent": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "start_year": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "final_year": {
+                        "type": "string",
+                        "format": "date",
+                        "minimum": {
+                            "$data": "1/start_year"
+                        }
+                    },
+                    "is_alumni": {
+                        "type": "boolean"
+                    },
+                    "country_code": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "state_id": {
+                        "type": "number",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "alternate_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "nullable": true
+                    },
+                    "profile_img_binary": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "degree_id": {
+                        "type": "number"
+                    },
+                    "department_id": {
+                        "type": "number"
+                    },
+                    "specialization_id": {
+                        "type": "number"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "role_id": {
+                        "type": "number"
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId"
+                    },
+                    "identification_number": {
+                        "type": "number"
+                    },
+                    "interest_id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name",
+                    "start_year",
+                    "final_year",
+                    "email",
+                    "degree_id",
+                    "department_id",
+                    "specialization_id",
+                    "institution_id",
+                    "identification_number"
+                ]
+            },
+            "AddStudentResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "start_year": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "final_year": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "is_alumni": {
+                        "type": "boolean"
+                    },
+                    "country_code": {
+                        "type": "string"
+                    },
+                    "state_id": {
+                        "type": "number"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "alternate_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "profile_img_binary": {
+                        "type": "string"
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "degree_id": {
+                        "type": "number"
+                    },
+                    "department_id": {
+                        "type": "number"
+                    },
+                    "specialization_id": {
+                        "type": "number"
+                    },
+                    "gender": {
+                        "type": "string"
+                    },
+                    "role_id": {
+                        "type": "number"
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId"
+                    },
+                    "identification_number": {
+                        "type": "number"
+                    },
+                    "interest_id": {
+                        "type": "string"
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/UpdatedAt"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "start_year",
+                    "final_year",
+                    "is_alumni",
+                    "country_code",
+                    "state_id",
+                    "phone",
+                    "email",
+                    "alternate_email",
+                    "profile_img_binary",
+                    "profile_type_id",
+                    "degree_id",
+                    "department_id",
+                    "specialization_id",
+                    "gender",
+                    "role_id",
+                    "institution_id",
+                    "identification_number",
+                    "interest_id",
+                    "updatedAt",
+                    "createdAt"
+                ]
+            },
+            "KeySignedUrlRequest": {
+                "type": "object",
+                "properties": {
+                    "keys": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string",
+                                    "required": true
+                                },
+                                "profile_type_id": {
+                                    "$ref": "#/components/schemas/ProfileTypeId"
+                                },
+                                "profile_email": {
+                                    "$ref": "#/components/schemas/Email",
+                                    "required": true
+                                }
+                            }
+                        }
+                    }
+                },
+                "example": {
+                    "keys": [
+                        {
+                            "key": "b328c318-1e4b-4fdc-b5a8-80743436bd6e",
+                            "profile_type_id": 1,
+                            "profile_email": "user@example.com"
+                        }
+                    ]
+                }
+            },
+            "KeySignedUrlResponse": {
+                "type": "object",
+                "properties": {
+                    "uid": {
+                        "type": "object",
+                        "properties": {
+                            "signedUrl": {
+                                "type": "string",
+                                "format": "url"
+                            },
+                            "bucketPath": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "example": {
+                    "b328c318-1e4b-4fdc-b5a8-80743436bd6e": {
+                        "signedUrl": "https://s3.amazonaws.com/...",
+                        "bucketPath": "profile/..."
+                    }
+                }
+            },
+            "MediaIdObject": {
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUID for the key"
+                    },
+                    "rootFolder": {
+                        "type": "string",
+                        "enum": [
+                            "posts"
+                        ],
+                        "description": "Root folder for media"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "video",
+                            "image"
+                        ],
+                        "description": "Type of media"
+                    }
+                },
+                "required": [
+                    "key",
+                    "rootFolder",
+                    "type"
+                ],
+                "example": {
+                    "key": "b328c318-1e4b-4fdc-b5a8-80743436bd6e",
+                    "rootFolder": "posts",
+                    "type": "image"
+                }
+            },
+            "GetPostMediaIdResponse": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "url",
+                        "description": "Path of the media"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "video",
+                            "image"
+                        ],
+                        "description": "Type of media"
+                    }
+                }
+            },
+            "MediaIdResponse": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "format": "url",
+                        "description": "Path of the media"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "video",
+                            "image"
+                        ],
+                        "description": "Type of media"
+                    }
+                }
+            },
+            "AddPostRequest": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample post",
+                        "maxLength": 300
+                    },
+                    "media_ids": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MediaIdObject"
+                        }
+                    },
+                    "circle_type": {
+                        "$ref": "#/components/schemas/CircleType",
+                        "description": "Circle type"
+                    },
+                    "post_user_type_id": {
+                        "type": "number",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ],
+                        "description": "Post user type ID"
+                    },
+                    "post_user_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    },
+                    "post_user_role_id": {
+                        "$ref": "#/components/schemas/PostUserRoleID"
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId",
+                        "description": "Institution ID"
+                    }
+                },
+                "required": [
+                    "description",
+                    "media_ids",
+                    "circle_type",
+                    "post_user_type_id",
+                    "post_user_email",
+                    "post_user_role_id",
+                    "institution_id"
+                ]
+            },
+            "AddPostResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "media_ids": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MediaIdResponse"
+                        }
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample post",
+                        "maxLength": 300
+                    },
+                    "circle_type": {
+                        "$ref": "#/components/schemas/CircleType"
+                    },
+                    "post_user_type_id": {
+                        "type": "number",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ],
+                        "description": "Post user type ID"
+                    },
+                    "post_user_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    },
+                    "post_user_role_id": {
+                        "$ref": "#/components/schemas/PostUserRoleID"
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId",
+                        "description": "Institution ID"
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/UpdatedAt"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                    }
+                }
+            },
+            "EditPostRequest": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample post",
+                        "maxLength": 300
+                    },
+                    "media_ids": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MediaIdObject"
+                        }
+                    }
+                }
+            },
+            "EditPostResponse": {
+                "type": "array",
+                "items": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "DeletePostRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 1
+                    },
+                    "post_user_type_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ],
+                        "description": "Post user type ID"
+                    },
+                    "profile_user_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    },
+                    "profile_user_role_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ],
+                        "description": "Post user role ID"
+                    }
+                }
+            },
+            "DeletePostResponse": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1
+            },
+            "GetPostResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "media_ids": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/MediaIdResponse"
+                            }
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "This is a sample post",
+                            "maxLength": 300
+                        },
+                        "circle_type": {
+                            "$ref": "#/components/schemas/CircleType"
+                        },
+                        "post_user_type_id": {
+                            "type": "number",
+                            "enum": [
+                                0,
+                                1,
+                                2,
+                                3
+                            ],
+                            "description": "Post user type ID"
+                        },
+                        "post_user_email": {
+                            "$ref": "#/components/schemas/Email",
+                            "description": "Post user email address"
+                        },
+                        "post_user_role_id": {
+                            "$ref": "#/components/schemas/PostUserRoleID"
+                        },
+                        "institution_id": {
+                            "$ref": "#/components/schemas/InstitutionId"
+                        },
+                        "updatedAt": {
+                            "$ref": "#/components/schemas/UpdatedAt"
+                        },
+                        "createdAt": {
+                            "$ref": "#/components/schemas/CreatedAt"
+                        }
+                    }
+                }
+            },
+            "LikeCommentCountResponse": {
+                "type": "object",
+                "properties": {
+                    "total_likes_count": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "is_liked_by_self": {
+                        "type": "boolean"
+                    },
+                    "total_comment_count": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "is_saved": {
+                        "type": "boolean"
+                    }
+                },
+                "example": {
+                    "total_likes_count": 1,
+                    "is_liked_by_self": true,
+                    "total_comment_count": 1,
+                    "is_saved": true
+                }
+            },
+            "LikePostRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 1
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    }
+                },
+                "example": {
+                    "post_id": 1,
+                    "profile_type_id": 1,
+                    "profile_email": "user@example.com"
+                }
+            },
+            "LikePostResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/UpdatedAt"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                    }
+                },
+                "example": {
+                    "id": 1,
+                    "post_id": 1,
+                    "profile_type_id": 1,
+                    "profile_email": "user@example.com"
+                }
+            },
+            "DislikePostRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 1
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    }
+                },
+                "example": {
+                    "post_id": 1,
+                    "profile_type_id": 1,
+                    "profile_email": "user@example.com"
+                }
+            },
+            "DislikePostResponse": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1
+            },
+            "GetLikePostResponse": {
+                "type": "object",
+                "properties": {
+                    "likesCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "example": {
+                    "likesCount": 1
+                }
+            },
+            "UnsavePostRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 1
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    }
+                },
+                "example": {
+                    "post_id": 1,
+                    "profile_type_id": 1,
+                    "profile_email": "user@example.com"
+                }
+            },
+            "UnsavePostResponse": {
+                "type": "integer",
+                "format": "int32",
+                "example": 1
+            },
+            "SavePostRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 1
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    }
+                },
+                "example": {
+                    "post_id": 1,
+                    "profile_type_id": 1,
+                    "profile_email": "user@example.com"
+                }
+            },
+            "GetSavedPostRequest": {
+                "type": "object",
+                "properties": {
+                    "profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "description": "Post user email address"
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    }
+                },
+                "example": {
+                    "profile_email": "user@example.com",
+                    "profile_type_id": 1
+                }
+            },
+            "GetSavedPostResponse": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/Post"
+                }
+            },
+            "PinnedPostRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 1
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId",
+                        "example": 1
+                    }
+                }
+            },
+            "PinnedPostResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId"
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/UpdatedAt"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                    }
+                }
+            },
+            "UnpinnedPostRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "institution_id": {
+                        "$ref": "#/components/schemas/InstitutionId"
+                    }
+                }
+            },
+            "UnpinnedPostResponse": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "GetPinnedPostResponse": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/Post"
+                }
+            },
+            "AddCommentRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample comment",
+                        "maxLength": 300
+                    },
+                    "commenting_profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "commenting_profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "commenting_profile_role_id": {
+                        "$ref": "#/components/schemas/PostUserRoleID"
+                    },
+                    "parent_comment_id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "commented_parent_profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "commented_parent_profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    }
+                },
+                "required": [
+                    "post_id",
+                    "description",
+                    "commenting_profile_email",
+                    "commenting_profile_type_id",
+                    "commenting_profile_role_id"
+                ],
+                "example": {
+                    "post_id": 1,
+                    "description": "This is a sample comment",
+                    "commenting_profile_email": "user@example.com",
+                    "commenting_profile_type_id": 1,
+                    "commenting_profile_role_id": 1
+                }
+            },
+            "AddCommentResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample comment",
+                        "maxLength": 300
+                    },
+                    "commenting_profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "commenting_profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "commenting_profile_role_id": {
+                        "$ref": "#/components/schemas/PostUserRoleID"
+                    },
+                    "parent_comment_id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "commented_parent_profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "commented_parent_profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/UpdatedAt"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                    }
+                },
+                "required": [
+                    "id",
+                    "post_id",
+                    "description",
+                    "commenting_profile_email",
+                    "commenting_profile_type_id",
+                    "commenting_profile_role_id",
+                    "updatedAt",
+                    "createdAt"
+                ],
+                "example": {
+                    "id": 1,
+                    "post_id": 1,
+                    "description": "This is a sample comment",
+                    "commenting_profile_email": "user@example.com",
+                    "commenting_profile_type_id": 1,
+                    "commenting_profile_role_id": 1,
+                    "updatedAt": "2021-06-30T06:59:59.000Z",
+                    "createdAt": "2021-06-30T06:59:59.000Z"
+                }
+            },
+            "DeleteCommentRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "parent_comment_id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "commenting_profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "commenting_profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    },
+                    "commenting_profile_role_id": {
+                        "$ref": "#/components/schemas/PostUserRoleID"
+                    }
+                },
+                "required": [
+                    "id",
+                    "post_id",
+                    "parent_comment_id",
+                    "commenting_profile_email",
+                    "commenting_profile_type_id",
+                    "commenting_profile_role_id"
+                ],
+                "example": {
+                    "id": 1,
+                    "post_id": 1,
+                    "parent_comment_id": 1,
+                    "commenting_profile_email": "user@example.com",
+                    "commenting_profile_type_id": 1,
+                    "commenting_profile_role_id": 1
+                }
+            },
+            "DeleteCommentResponse": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "EditCommentRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample comment",
+                        "maxLength": 300
+                    },
+                    "profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId"
+                    }
+                },
+                "required": [
+                    "id",
+                    "post_id",
+                    "description",
+                    "profile_email",
+                    "profile_type_id"
+                ],
+                "example": {
+                    "id": 1,
+                    "post_id": 1,
+                    "description": "This is a sample comment",
+                    "profile_email": "user@example.com",
+                    "profile_type_id": 1
+                }
+            },
+            "EditCommentResponse": {
+                "type": "array",
+                "items": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "example": [
+                    1
+                ]
+            },
+            "GetCommentsRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "commented_parent_profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "allowNull": true
+                    },
+                    "commented_parent_profile_type_id": {
+                        "$ref": "#/components/schemas/ProfileTypeId",
+                        "allowNull": true
+                    }
+                },
+                "required": [
+                    "post_id"
+                ],
+                "example": {
+                    "post_id": 1,
+                    "limit": 10,
+                    "offset": 0,
+                    "commented_parent_profile_email": "user@example.com",
+                    "commented_parent_profile_type_id": 1
+                }
+            },
+            "AddInterestCommentRequest": {
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample comment",
+                        "maxLength": 300
+                    },
+                    "commenting_profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "commented_parent_profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "allowNull": true
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "parent_comment_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "allowNull": true
+                    }
+                }
+            },
+            "AddInterestCommentResponse": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample comment",
+                        "maxLength": 300
+                    },
+                    "commenting_profile_email": {
+                        "$ref": "#/components/schemas/Email"
+                    },
+                    "commented_parent_profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "allowNull": true
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "parent_comment_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "allowNull": true
+                    },
+                    "updatedAt": {
+                        "$ref": "#/components/schemas/UpdatedAt"
+                    },
+                    "createdAt": {
+                        "$ref": "#/components/schemas/CreatedAt"
+                    }
+                }
+            },
+            "DeleteInterestCommentRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    }
+                },
+                "required": [
+                    "id",
+                    "post_id"
+                ],
+                "example": {
+                    "id": 1,
+                    "post_id": 1
+                }
+            },
+            "DeleteInterestCommentResponse": {
+                "type": "integer",
+                "format": "int32"
+            },
+            "EditInterestCommentRequest": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "post_id": {
+                        "$ref": "#/components/schemas/PostId"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a sample comment",
+                        "maxLength": 300
+                    }
+                }
+            },
+            "EditInterestCommentResponse": {
+                "type": "array",
+                "items": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "example": [
+                    1
+                ]
+            },
+            "GetInterestCommentsRequest": {
+                "type": "object",
+                "properties": {
+                    "post_id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "offset": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "commented_parent_profile_email": {
+                        "$ref": "#/components/schemas/Email",
+                        "allowNull": true
+                    },
+                    "parent_comment_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "allowNull": true
+                    }
+                },
+                "required": [
+                    "post_id",
+                    "limit",
+                    "offset"
+                ],
+                "example": {
+                    "post_id": 1,
+                    "limit": 10,
+                    "offset": 0,
+                    "commented_parent_profile_email": "user@example.com",
+                    "parent_comment_id": 1
+                }
+            },
+            "GetInterestCommentsResponse": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "This is a sample comment",
+                            "maxLength": 300
+                        },
+                        "commenting_profile_email": {
+                            "$ref": "#/components/schemas/Email"
+                        },
+                        "commented_parent_profile_email": {
+                            "$ref": "#/components/schemas/Email",
+                            "allowNull": true
+                        },
+                        "post_id": {
+                            "$ref": "#/components/schemas/PostId"
+                        },
+                        "parent_comment_id": {
+                            "type": "integer",
+                            "format": "int32",
+                            "allowNull": true
+                        },
+                        "updatedAt": {
+                            "$ref": "#/components/schemas/UpdatedAt"
+                        },
+                        "createdAt": {
+                            "$ref": "#/components/schemas/CreatedAt"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "requestBodies": {},
+    "securitySchemes": {
+        "bearerAuth": {
+            "name": "Authorization",
+            "type": "http",
+            "in": "header",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+        }
+    }
+}
